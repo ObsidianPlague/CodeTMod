@@ -1,14 +1,11 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-rem Set this path to your mod directory. You can use environment variables to avoid hardcoding the path if your team members have different install locations.
-set mod_directory=D:\SteamLibrary\steamapps\common\Half-Life\codet
-
 rem Input paths may end with a backslash which will be interpreted as an escape character when passed into robocopy, so this needs to be escaped.
 set source=%~1
 set source=%source:\=\\%
 
-set destination=%mod_directory%
+set destination=%HL_CODET_DIR%
 
 if NOT "%~2" == "" (
 	set destination=!destination!/%~2
