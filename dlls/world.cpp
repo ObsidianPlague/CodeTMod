@@ -501,6 +501,7 @@ void CWorld::Spawn()
 
 void CWorld::Precache()
 {
+	ALERT(at_console, "Code T Initiated :3\n"); // First thing to add!
 	// Flag this entity for removal if it's not the actual world entity.
 	if (World != this)
 	{
