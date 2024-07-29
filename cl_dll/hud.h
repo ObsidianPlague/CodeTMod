@@ -22,9 +22,7 @@
 
 #pragma once
 
-#define RGB_YELLOWISH 0x00FFA000 //255,160,0
-#define RGB_REDISH 0x00FF1010	 //255,160,0
-#define RGB_GREENISH 0x0000A000	 //0,160,0
+#include "hud_colors.h"
 
 #include "common_types.h"
 #include "cl_dll.h"
@@ -333,6 +331,7 @@ private:
 	HSPRITE m_hSprite2;
 	Rect* m_prc1;
 	Rect* m_prc2;
+	int m_iGetAllColors[3];
 	int m_iBat;
 	int m_iBatMax;
 	float m_fFade;
