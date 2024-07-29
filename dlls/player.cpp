@@ -78,6 +78,9 @@ TYPEDESCRIPTION CBasePlayer::m_playerSaveData[] =
 		DEFINE_FIELD(CBasePlayer, m_flDuckTime, FIELD_TIME),
 		DEFINE_FIELD(CBasePlayer, m_flWallJumpTime, FIELD_TIME),
 
+		DEFINE_ARRAY(CBasePlayer, m_iArmorColor, FIELD_INTEGER, 3),
+
+		DEFINE_FIELD(CBasePlayer, m_flArmorGuard, FIELD_FLOAT),
 		DEFINE_FIELD(CBasePlayer, m_flSuitUpdate, FIELD_TIME),
 		DEFINE_ARRAY(CBasePlayer, m_rgSuitPlayList, FIELD_INTEGER, CSUITPLAYLIST),
 		DEFINE_FIELD(CBasePlayer, m_iSuitPlayNext, FIELD_INTEGER),
@@ -361,12 +364,6 @@ bool CBasePlayer::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 	flBonus = ARMOR_BONUS;
 	flRatio = ARMOR_RATIO;
 
-	if ((bitsDamageType & DMG_BLAST) != 0 && g_pGameRules->IsMultiplayer())
-	{
-		// blasts damage armor more.
-		flBonus *= 2;
-	}
-
 	// Already dead
 	if (!IsAlive())
 		return false;
@@ -389,9 +386,7 @@ bool CBasePlayer::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 	{
 		float flNew = flDamage * flRatio;
 
-		float flArmor;
-
-		flArmor = (flDamage - flNew) * flBonus;
+		float flArmor = (flDamage - flNew) * flBonus;
 
 		// Does this use more armor than we have?
 		if (flArmor > pev->armorvalue)

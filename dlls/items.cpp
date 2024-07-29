@@ -29,6 +29,7 @@
 #include "items.h"
 #include "gamerules.h"
 #include "UserMessages.h"
+#include "shake.h"
 
 class CWorldItem : public CBaseEntity
 {
@@ -337,3 +338,101 @@ class CItemLongJump : public CItem
 };
 
 LINK_ENTITY_TO_CLASS(item_longjump, CItemLongJump);
+
+class CItemArmorBase : public CItem
+{
+public:
+	int i_TopC = 0;
+	int i_BottC = 0;
+
+	int i_ArmorVal = 0;
+
+	int i_MinArm = 0;
+	int i_MaxArm = 0;
+
+	float fl_Guard = 0.0;
+
+	int i_flColor[3] = {255, 255, 0};
+
+	void Spawn() override
+	{
+		Precache();
+		SET_MODEL(ENT(pev), "models/w_armor.mdl");
+		pev->colormap = (i_TopC & 0xFF) | ((i_BottC & 0xFF) << 8);
+		CItem::Spawn();
+	}
+
+	void Precache() override
+	{
+		PRECACHE_MODEL("models/w_armor.mdl");
+		PRECACHE_SOUND("items/armorpickup.wav");
+	}
+
+	bool MyTouch(CBasePlayer* pPlayer) override
+	{
+		if (pPlayer->pev->deadflag != DEAD_NO)
+		{
+			return false;
+		}
+
+		if ((pPlayer->pev->armorvalue < i_MaxArm) &&
+			(pPlayer->pev->armorvalue <= i_MinArm) &&
+			(pPlayer->pev->armorvalue < MAX_NORMAL_BATTERY) &&
+			pPlayer->HasSuit())
+		{
+			pPlayer->pev->armorvalue += gSkillData.batteryCapacity;
+			pPlayer->pev->armorvalue = V_min(pPlayer->pev->armorvalue, i_MaxArm);
+			pPlayer->m_flArmorGuard = fl_Guard;
+
+			EMIT_SOUND(pPlayer->edict(), CHAN_ITEM, "items/armorpickup.wav", 1, ATTN_NORM);
+			#ifndef CLIENT_DLL
+			UTIL_ScreenFade(pPlayer, Vector(i_flColor[0], i_flColor[1], i_flColor[2]), 0.3, 0.1, 128, FFADE_IN);
+			for (int i = 0; i <= 2; ++i)
+				pPlayer->m_iArmorColor[i] = i_flColor[i];
+			#endif
+
+			return true;
+		}
+		return false;
+	}
+};
+
+class CItemArmorLight : CItemArmorBase
+{
+	public:
+		int i_TopC = 80;
+		int i_BottC = 60;
+
+		int i_ArmorVal = 20;
+		int i_MaxArm = 20;
+		float fl_Guard = 0.9; //10%?
+
+		int i_flColor[3] = {0, 100, 0};
+};
+
+class CItemArmorMedium : CItemArmorBase
+{
+	public:
+		int i_TopC = 132;
+		int i_BottC = 158;
+
+		int i_ArmorVal = 100;
+		int i_MaxArm = 100;
+		float fl_Guard = 0.85; //25%?
+
+		int i_flColor[3] = {0, 0, 100};
+};
+
+class CItemArmorHeavy : CItemArmorBase
+{
+	public:
+		int i_ArmorVal = 150;
+		int i_MaxArm = 150;
+		float fl_Guard = 0.50; //50%?
+
+		int i_flColor[3] = {100, 0, 0};
+};
+
+LINK_ENTITY_TO_CLASS(item_armor_light, CItemArmorLight);
+LINK_ENTITY_TO_CLASS(item_armor_medium, CItemArmorMedium);
+LINK_ENTITY_TO_CLASS(item_armor_heavy, CItemArmorHeavy);
