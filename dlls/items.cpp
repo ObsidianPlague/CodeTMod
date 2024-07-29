@@ -397,7 +397,7 @@ public:
 	}
 };
 
-class CItemArmorLight : CItemArmorBase
+class CItemArmorLight : public CItemArmorBase
 {
 	public:
 		int i_TopC = 80;
@@ -410,7 +410,7 @@ class CItemArmorLight : CItemArmorBase
 		int i_flColor[3] = {0, 100, 0};
 };
 
-class CItemArmorMedium : CItemArmorBase
+class CItemArmorMedium : public CItemArmorBase
 {
 	public:
 		int i_TopC = 132;
@@ -423,7 +423,7 @@ class CItemArmorMedium : CItemArmorBase
 		int i_flColor[3] = {0, 0, 100};
 };
 
-class CItemArmorHeavy : CItemArmorBase
+class CItemArmorHeavy : public CItemArmorBase
 {
 	public:
 		int i_ArmorVal = 150;
