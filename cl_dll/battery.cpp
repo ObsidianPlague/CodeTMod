@@ -60,6 +60,9 @@ bool CHudBattery::MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_SHORT();
+	m_iGetAllColors[0] = READ_SHORT();
+	m_iGetAllColors[1] = READ_SHORT();
+	m_iGetAllColors[2] = READ_SHORT();
 
 	if (x != m_iBat)
 	{
@@ -83,7 +86,14 @@ bool CHudBattery::Draw(float flTime)
 
 	rc.top += m_iHeight * ((float)(100 - (V_min(100, m_iBat))) * 0.01); // battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 
-	UnpackRGB(r, g, b, RGB_YELLOWISH);
+	if (m_iGetAllColors[0] && m_iGetAllColors[1] && m_iGetAllColors[2])
+	{
+		r = m_iGetAllColors[0];
+		g = m_iGetAllColors[1];
+		b = m_iGetAllColors[2];
+	}
+	else
+		UnpackRGB(r, g, b, RGB_INACTIVE);
 
 	if (!gHUD.HasSuit())
 		return true;
