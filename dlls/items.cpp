@@ -380,7 +380,7 @@ public:
 			(pPlayer->pev->armorvalue < MAX_NORMAL_BATTERY) &&
 			pPlayer->HasSuit())
 		{
-			pPlayer->pev->armorvalue += gSkillData.batteryCapacity;
+			pPlayer->pev->armorvalue += i_ArmorVal;
 			pPlayer->pev->armorvalue = V_min(pPlayer->pev->armorvalue, i_MaxArm);
 			pPlayer->m_flArmorGuard = fl_Guard;
 
