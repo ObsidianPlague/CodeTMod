@@ -391,6 +391,8 @@ bool CBasePlayer::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 		// Does this use more armor than we have?
 		if (flArmor > pev->armorvalue)
 		{
+			for (int i = 0; i <= 2; ++i)
+				m_iArmorColor[i] = 0;
 			flArmor = pev->armorvalue;
 			flArmor *= (1 / flBonus);
 			flNew = flDamage - flArmor;
