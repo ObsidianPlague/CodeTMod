@@ -78,7 +78,7 @@ TYPEDESCRIPTION CBasePlayer::m_playerSaveData[] =
 		DEFINE_FIELD(CBasePlayer, m_flDuckTime, FIELD_TIME),
 		DEFINE_FIELD(CBasePlayer, m_flWallJumpTime, FIELD_TIME),
 
-		DEFINE_ARRAY(CBasePlayer, m_iArmorColor, FIELD_INTEGER, 3),
+		DEFINE_FIELD(CBasePlayer, m_iArmorColor, FIELD_INTEGER),
 
 		DEFINE_FIELD(CBasePlayer, m_flArmorGuard, FIELD_FLOAT),
 		DEFINE_FIELD(CBasePlayer, m_flSuitUpdate, FIELD_TIME),
@@ -391,8 +391,7 @@ bool CBasePlayer::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 		// Does this use more armor than we have?
 		if (flArmor > pev->armorvalue)
 		{
-			for (int i = 0; i <= 2; ++i)
-				m_iArmorColor[i] = 0;
+			m_iArmorColor = 0;
 			flArmor = pev->armorvalue;
 			flArmor *= (1 / flBonus);
 			flNew = flDamage - flArmor;
@@ -4018,6 +4017,7 @@ void CBasePlayer::UpdateClientData()
 		// send "health" update message
 		MESSAGE_BEGIN(MSG_ONE, gmsgBattery, NULL, pev);
 		WRITE_SHORT((int)pev->armorvalue);
+		WRITE_SHORT(m_iArmorColor);
 		MESSAGE_END();
 	}
 

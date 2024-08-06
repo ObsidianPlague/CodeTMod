@@ -331,7 +331,7 @@ private:
 	HSPRITE m_hSprite2;
 	Rect* m_prc1;
 	Rect* m_prc2;
-	int m_iGetAllColors[3];
+	int m_iBatColor;
 	int m_iBat;
 	int m_iBatMax;
 	float m_fFade;

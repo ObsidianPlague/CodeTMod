@@ -352,13 +352,22 @@ public:
 
 	float fl_Guard = 0.0;
 
-	int i_flColor[3] = {255, 255, 0};
+	int i_flColor[3];
+	int i_ColorID;
+
+	bool Save(CSave& save) override;
+	bool Restore(CRestore& restore) override;
+
+	static TYPEDESCRIPTION m_SaveData[];
+
+	virtual void GetArmorInfo() {}
 
 	void Spawn() override
 	{
 		Precache();
-		SET_MODEL(ENT(pev), "models/w_armor.mdl");
+		GetArmorInfo();
 		pev->colormap = (i_TopC & 0xFF) | ((i_BottC & 0xFF) << 8);
+		SET_MODEL(ENT(pev), "models/w_armor.mdl");
 		CItem::Spawn();
 	}
 
@@ -387,9 +396,9 @@ public:
 			EMIT_SOUND(pPlayer->edict(), CHAN_ITEM, "items/armorpickup.wav", 1, ATTN_NORM);
 			#ifndef CLIENT_DLL
 			UTIL_ScreenFade(pPlayer, Vector(i_flColor[0], i_flColor[1], i_flColor[2]), 0.3, 0.1, 128, FFADE_IN);
-			for (int i = 0; i <= 2; ++i)
-				pPlayer->m_iArmorColor[i] = i_flColor[i];
 			#endif
+
+			pPlayer->m_iArmorColor = i_ColorID;
 
 			return true;
 		}
@@ -397,30 +406,46 @@ public:
 	}
 };
 
+TYPEDESCRIPTION CItemArmorBase::m_SaveData[] =
+	{
+		DEFINE_FIELD(CItemArmorBase, i_TopC, FIELD_INTEGER),
+		DEFINE_FIELD(CItemArmorBase, i_BottC, FIELD_INTEGER),
+		DEFINE_FIELD(CItemArmorBase, i_ArmorVal, FIELD_INTEGER),
+		DEFINE_FIELD(CItemArmorBase, i_MinArm, FIELD_INTEGER),
+		DEFINE_FIELD(CItemArmorBase, i_MaxArm, FIELD_INTEGER),
+		DEFINE_FIELD(CItemArmorBase, fl_Guard, FIELD_FLOAT),
+		DEFINE_ARRAY(CItemArmorBase, i_flColor, FIELD_INTEGER, 3),
+
+};
+
+IMPLEMENT_SAVERESTORE(CItemArmorBase, CItem);
+
 class CItemArmorLight : public CItemArmorBase
 {
 	public:
-		int i_TopC = 80;
-		int i_BottC = 60;
-
-		int i_ArmorVal = 20;
-		int i_MaxArm = 20;
-		float fl_Guard = 0.9; //10%?
-
-		int i_flColor[3] = {0, 100, 0};
+		void GetArmorInfo() override
+		{
+			i_TopC = 80;
+			i_BottC = 60;
+			i_ArmorVal = 20;
+			i_MaxArm = 20;
+			fl_Guard = 0.9; //10%?
+			i_flColor[1] = 100;
+		}
 };
 
 class CItemArmorMedium : public CItemArmorBase
 {
 	public:
-		int i_TopC = 132;
-		int i_BottC = 158;
-
-		int i_ArmorVal = 100;
-		int i_MaxArm = 100;
-		float fl_Guard = 0.85; //25%?
-
-		int i_flColor[3] = {0, 0, 100};
+		void GetArmorInfo() override
+		{
+			i_TopC = 132;
+			i_BottC = 158;
+			i_ArmorVal = 100;
+			i_MaxArm = 100;
+			fl_Guard = 0.85; // 25%?
+			i_flColor[2] = 100;
+		}
 };
 
 class CItemArmorHeavy : public CItemArmorBase
@@ -431,6 +456,14 @@ class CItemArmorHeavy : public CItemArmorBase
 		float fl_Guard = 0.50; //50%?
 
 		int i_flColor[3] = {100, 0, 0};
+
+		void GetArmorInfo() override
+		{
+			i_ArmorVal = 150;
+			i_MaxArm = 150;
+			fl_Guard = 0.50; // 50%?
+			i_flColor[0] = 100;
+		}
 };
 
 LINK_ENTITY_TO_CLASS(item_armor_light, CItemArmorLight);

@@ -137,7 +137,7 @@ public:
 	float m_flDuckTime;		  // how long we've been ducking
 	float m_flWallJumpTime;	  // how long until next walljump
 
-	int m_iArmorColor[3]; // what color to display on the hud?
+	int m_iArmorColor; // what color to display on the hud?
 
 	float m_flArmorGuard;	 // how much damage will the armor take away?
 	float m_flSuitUpdate;						 // when to play next suit update

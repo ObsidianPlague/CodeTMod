@@ -27,6 +27,16 @@
 
 DECLARE_MESSAGE(m_Battery, Battery)
 
+enum {
+	ARM_LIGHT = 1,
+	ARM_MEDIUM,
+	ARM_HEAVY
+};
+
+#define ARMLIGHT_COLOR 0x000DF252
+#define ARMMED_COLOR 0x007886FE
+#define ARMHEAV_COLOR 0x00D74100
+
 bool CHudBattery::Init()
 {
 	m_iBat = 0;
@@ -60,9 +70,7 @@ bool CHudBattery::MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_SHORT();
-	m_iGetAllColors[0] = READ_SHORT();
-	m_iGetAllColors[1] = READ_SHORT();
-	m_iGetAllColors[2] = READ_SHORT();
+	m_iBatColor = READ_SHORT();
 
 	if (x != m_iBat)
 	{
@@ -85,12 +93,25 @@ bool CHudBattery::Draw(float flTime)
 	rc = *m_prc2;
 
 	rc.top += m_iHeight * ((float)(100 - (V_min(100, m_iBat))) * 0.01); // battery can go from 0 to 100 so * 0.01 goes from 0 to 1
+	//TODO: 100 IS NO LONGER THE MAX, FIX THIS SOON --plg
 
-	if (m_iGetAllColors[0] && m_iGetAllColors[1] && m_iGetAllColors[2])
+	if (m_iBat)
 	{
-		r = m_iGetAllColors[0];
-		g = m_iGetAllColors[1];
-		b = m_iGetAllColors[2];
+		switch (m_iBatColor)
+		{
+			case ARM_LIGHT:
+				UnpackRGB(r, g, b, ARMLIGHT_COLOR);
+				break;
+			case ARM_MEDIUM:
+				UnpackRGB(r, g, b, ARMMED_COLOR);
+				break;
+			case ARM_HEAVY:
+				UnpackRGB(r, g, b, ARMHEAV_COLOR);
+				break;
+			default:
+				UnpackRGB(r, g, b, RGB_INACTIVE);
+				break;
+		}
 	}
 	else
 		UnpackRGB(r, g, b, RGB_INACTIVE);
